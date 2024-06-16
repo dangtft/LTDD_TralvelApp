@@ -1,0 +1,10 @@
+﻿namespace TravelAPI.DTOs
+{
+    public class FlightBookingDTO
+    {
+        public int? UserId { get; set; }
+        public int? FlightId { get; set; }
+        public DateTime? BookingDate { get; set; }
+        public string? Status { get; set; }
+    }
+}

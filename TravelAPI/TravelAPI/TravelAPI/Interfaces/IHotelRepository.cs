@@ -1,4 +1,6 @@
-﻿using TravelAPI.Models;
+﻿using TravelAPI.DTOs;
+using TravelAPI.Models;
+using TravelAPI.ViewModel;
 
 namespace TravelAPI.Interfaces
 {
@@ -14,7 +16,10 @@ namespace TravelAPI.Interfaces
 		Task<Flight> GetFlightById(int id);
 		Task<User> LoginAsync(string email, string password);
 		Task<User> RegisterAsync(string name, string email, string phone, string address, string password);
-		Task<HotelBooking> BookHotelAsync(HotelBooking booking);
-		Task<FlightBooking> BookFlightAsync(FlightBooking booking);
-	}
+		Task<HotelBookingDTO> BookHotelAsync(HotelBookingDTO bookingDto);
+		Task<FlightBookingDTO> BookFlightAsync(FlightBookingDTO bookingDtoS);
+        Task<List<HotelBookingDTO>> GetHotelBookingsByUserIdAsync(int userId); 
+        Task<List<FlightBookingDTO>> GetFlightBookingsByUserIdAsync(int userId);
+		Task<User> GetUserById (int userId);
+    }
 }

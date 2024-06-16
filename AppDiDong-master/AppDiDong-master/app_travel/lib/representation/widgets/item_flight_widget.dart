@@ -6,7 +6,7 @@ import 'package:app_travel/data/model/flight_model.dart';
 import 'package:app_travel/representation/widgets/dash_line.dart';
 import 'package:app_travel/representation/widgets/item_button_widget.dart';
 import 'package:flutter/material.dart';
-
+import 'package:intl/intl.dart';
 class ItemFlightWidget extends StatelessWidget {
   const ItemFlightWidget({
     Key? key,
@@ -31,12 +31,9 @@ class ItemFlightWidget extends StatelessWidget {
           Container(
             width: double.infinity,
             margin: EdgeInsets.only(right: kDefaultPadding),
-            child: ImageHelper.loadFromAsset(
+            child: Image.network(
               flightModel.imageUrl,
-              radius: BorderRadius.only(
-                topLeft: Radius.circular(kDefaultPadding),
-                bottomRight: Radius.circular(kDefaultPadding),
-              ),
+              fit: BoxFit.cover,
             ),
           ),
           Padding(
@@ -53,7 +50,14 @@ class ItemFlightWidget extends StatelessWidget {
                   children: [
                     ImageHelper.loadFromAsset(AssetHelper.icoLocationBlank),
                     SizedBox(width: kMinPadding),
-                    Text(flightModel.location),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${flightModel.location} to ${flightModel.destination}'),
+                        Text('Time : ${flightModel.dayFlight.toString()}'),
+                        Text('Takeoff : ${DateFormat('dd/MM/yyyy').format(flightModel.departureTime)}'),
+                      ],
+                    ),
                   ],
                 ),
                 SizedBox(height: kDefaultPadding),

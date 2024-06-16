@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using TravelAPI.Interfaces;
 using TravelAPI.Models;
 using TravelAPI.DTOs;
+using Microsoft.EntityFrameworkCore;
+using TravelAPI.ViewModel;
+using TravelAPI.Data;
 namespace TravelAPI.Controllers
 {
 	[Route("api/[controller]")]
@@ -11,9 +14,11 @@ namespace TravelAPI.Controllers
 	public class HotelController : ControllerBase
 	{
 		private readonly IHotelRepository _hotelRepository;
-		public HotelController(IHotelRepository hotelRepository)
+		private readonly TravelDbContext _context;
+		public HotelController(IHotelRepository hotelRepository,TravelDbContext context)
 		{
 			this._hotelRepository = hotelRepository;
+			this._context = context;
 		}
 
 		// GET: api/Travel/hotels
@@ -120,11 +125,11 @@ namespace TravelAPI.Controllers
 
 		// POST: api/Travel/bookhotel
 		[HttpPost("bookhotel")]
-		public async Task<ActionResult<HotelBooking>> BookHotel([FromBody] HotelBooking booking)
+		public async Task<ActionResult<HotelBookingDTO>> BookHotel([FromBody] HotelBookingDTO bookingDto)
 		{
 			try
 			{
-				var bookedHotel = await _hotelRepository.BookHotelAsync(booking);
+				var bookedHotel = await _hotelRepository.BookHotelAsync(bookingDto);
 				return CreatedAtAction(nameof(BookHotel), bookedHotel);
 			}
 			catch (Exception ex)
@@ -135,11 +140,11 @@ namespace TravelAPI.Controllers
 
 		// POST: api/Travel/bookflight
 		[HttpPost("bookflight")]
-		public async Task<ActionResult<FlightBooking>> BookFlight([FromBody] FlightBooking booking)
+		public async Task<ActionResult<FlightBookingDTO>> BookFlight([FromBody] FlightBookingDTO bookingDto)
 		{
 			try
 			{
-				var bookedFlight = await _hotelRepository.BookFlightAsync(booking);
+				var bookedFlight = await _hotelRepository.BookFlightAsync(bookingDto);
 				return CreatedAtAction(nameof(BookFlight), bookedFlight);
 			}
 			catch (Exception ex)
@@ -181,7 +186,43 @@ namespace TravelAPI.Controllers
 				return StatusCode(500, $"Internal server error: {ex.Message}");
 			}
 		}
-	}
+
+        [HttpGet("bookings/{userId}")]
+        public async Task<IActionResult> GetBookingsByUserId(int userId)
+        {
+            try
+            {
+                var hotelBookings = await _hotelRepository.GetHotelBookingsByUserIdAsync(userId);
+                var flightBookings = await _hotelRepository.GetFlightBookingsByUserIdAsync(userId);
+
+                var bookingCompleteVM = new BookingCompleteVM
+                {
+                    HotelBookings = hotelBookings,
+                    FlightBookings = flightBookings
+                };
+
+                return Ok(bookingCompleteVM);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+		[HttpGet("GetUser/{userId}")]
+		public async Task<IActionResult> GetUserById(int userId)
+		{
+			try
+			{
+				var user = await _hotelRepository.GetUserById(userId);
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+		}
+    }
 
 
 }

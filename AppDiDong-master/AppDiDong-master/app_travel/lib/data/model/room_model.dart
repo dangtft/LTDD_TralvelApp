@@ -1,3 +1,5 @@
+
+
 class Room {
   int roomId;
   String roomName;
@@ -9,6 +11,7 @@ class Room {
   String promoCode;
   String status;
   int rating;
+  int? numberofpeople;
 
   Room({
     required this.roomId,
@@ -20,7 +23,8 @@ class Room {
     required this.contact,
     required this.promoCode,
     required this.status,
-    required this.rating
+    required this.rating,
+    required this.numberofpeople
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
@@ -34,7 +38,8 @@ class Room {
       contact: json['contact'],
       promoCode: json['promoCode'],
       status: json['status'],
-      rating: json['rating']
+      rating: json['rating'],
+      numberofpeople: json['numberofpeople']
     );
   }
 
@@ -49,7 +54,8 @@ class Room {
       'contact': contact,
       'promoCode': promoCode,
       'status': status,
-      'rating': rating
+      'rating': rating,
+      'numberofpeople': numberofpeople,
     };
   }
 }

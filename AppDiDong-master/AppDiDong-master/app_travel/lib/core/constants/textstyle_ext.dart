@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'color_constants.dart';
 
 extension ExtendedTextStyle on TextStyle {
@@ -80,5 +79,13 @@ class TextStyles {
     color: ColorPalette.text1Color,
     fontWeight: FontWeight.w400,
     height: 16 / 14,
+  );
+
+  // Define your fontBody style here
+  static const TextStyle fontBody = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+    color: ColorPalette.text1Color,
+    height: 1.5, // Adjust as needed
   );
 }

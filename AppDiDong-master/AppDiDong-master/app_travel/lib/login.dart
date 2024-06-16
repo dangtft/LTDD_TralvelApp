@@ -4,6 +4,7 @@ import 'package:app_travel/representation/screens/main_app.dart';
 import 'package:app_travel/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -166,6 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        int userId = jsonResponse['userId'];
+        _saveUserId(userId);
         // Successful login, navigate to main app screen
         Navigator.pushReplacementNamed(context, MainApp.routeName);
       } else if (response.statusCode == 404) {
@@ -223,4 +227,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+}
+Future<void> _saveUserId(int userId) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('userId', userId);
 }

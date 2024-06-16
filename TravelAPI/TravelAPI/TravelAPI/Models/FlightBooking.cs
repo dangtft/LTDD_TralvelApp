@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TravelAPI.Models
 {
 	public class FlightBooking
 	{
 		[Key]
-		public int FlightBookingId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int FlightBookingId { get; set; }
 		public int? UserId { get; set; }
 		public int? FlightId { get; set; }
 		public DateTime? BookingDate { get; set; }

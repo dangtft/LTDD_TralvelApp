@@ -1,6 +1,5 @@
 import 'package:app_travel/core/constants/dismension_constants.dart';
 import 'package:app_travel/core/constants/textstyle_ext.dart';
-import 'package:app_travel/core/helpers/image_helper.dart';
 import 'package:app_travel/data/model/hotel_model.dart';
 import 'package:app_travel/representation/widgets/dash_line.dart';
 import 'package:app_travel/representation/widgets/item_button_widget.dart';

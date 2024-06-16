@@ -1,5 +1,5 @@
 class HotelBooking {
-  int bookingId;
+  //int bookingId;
   int userId;
   int roomId;
   DateTime checkInDate;
@@ -7,7 +7,7 @@ class HotelBooking {
   String status;
 
   HotelBooking({
-    required this.bookingId,
+    //required this.bookingId,
     required this.userId,
     required this.roomId,
     required this.checkInDate,
@@ -17,7 +17,7 @@ class HotelBooking {
 
   factory HotelBooking.fromJson(Map<String, dynamic> json) {
     return HotelBooking(
-      bookingId: json['bookingId'],
+      //bookingId: json['bookingId'],
       userId: json['userId'],
       roomId: json['roomId'],
       checkInDate: DateTime.parse(json['checkInDate']),
@@ -28,7 +28,7 @@ class HotelBooking {
 
   Map<String, dynamic> toJson() {
     return {
-      'bookingId': bookingId,
+      //'bookingId': bookingId,
       'userId': userId,
       'roomId': roomId,
       'checkInDate': checkInDate.toIso8601String(),

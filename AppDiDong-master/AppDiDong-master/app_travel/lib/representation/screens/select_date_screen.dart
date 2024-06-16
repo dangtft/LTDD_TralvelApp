@@ -5,14 +5,17 @@ import 'package:app_travel/representation/widgets/item_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-// ignore: must_be_immutable
-class SelectDateScreen extends StatelessWidget {
-  SelectDateScreen({Key? key}) : super(key: key);
-
+class SelectDateScreen extends StatefulWidget {
   static const String routeName = '/select_date_screen';
 
+  @override
+  _SelectDateScreenState createState() => _SelectDateScreenState();
+}
+
+class _SelectDateScreenState extends State<SelectDateScreen> {
   DateTime? rangeStartDate;
   DateTime? rangeEndDate;
+
   @override
   Widget build(BuildContext context) {
     return AppBarContainer(
@@ -35,10 +38,15 @@ class SelectDateScreen extends StatelessWidget {
             toggleDaySelection: true,
             onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
               if (args.value is PickerDateRange) {
-                rangeStartDate = args.value.startDate;
-                rangeEndDate = args.value.endDate;
+                setState(() {
+                  rangeStartDate = args.value.startDate;
+                  rangeEndDate = args.value.endDate;
+                });
               }
             },
+          ),
+          SizedBox(
+            height: kMediumPadding,
           ),
           ItemButtonWidget(
             data: 'Select',

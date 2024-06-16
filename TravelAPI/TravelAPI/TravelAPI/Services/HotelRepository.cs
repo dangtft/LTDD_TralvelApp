@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using TravelAPI.Data;
+using TravelAPI.DTOs;
 using TravelAPI.Interfaces;
 using TravelAPI.Models;
+using TravelAPI.ViewModel;
 
 namespace TravelAPI.Services
 {
@@ -57,20 +60,55 @@ namespace TravelAPI.Services
 		}
 
 		// Phương thức đặt phòng khách sạn
-		public async Task<HotelBooking> BookHotelAsync(HotelBooking booking)
+		public async Task<HotelBookingDTO> BookHotelAsync(HotelBookingDTO bookingDto)
 		{
-			_context.HotelBookings.Add(booking);
-			await _context.SaveChangesAsync();
-			return booking;
-		}
+
+            try
+            {
+                var booking = new HotelBooking
+                {
+                    UserId = bookingDto.UserId,
+                    RoomId = bookingDto.RoomId,
+                    CheckInDate = bookingDto.CheckInDate,
+                    CheckOutDate = bookingDto.CheckOutDate,
+                    Status = bookingDto.Status
+                };
+
+                _context.HotelBookings.Add(booking);
+                await _context.SaveChangesAsync();
+
+                return bookingDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to book hotel: {ex.Message}");
+            }
+        }
 
 		// Phương thức đặt vé máy bay
-		public async Task<FlightBooking> BookFlightAsync(FlightBooking booking)
+		public async Task<FlightBookingDTO> BookFlightAsync(FlightBookingDTO bookingDto)
 		{
-			_context.FlightsBookings.Add(booking);
-			await _context.SaveChangesAsync();
-			return booking;
-		}
+
+            try
+            {
+                var booking = new FlightBooking
+                {
+                    UserId = bookingDto.UserId,
+                    FlightId = bookingDto.FlightId,
+                    BookingDate = bookingDto.BookingDate,
+                    Status = bookingDto.Status
+                };
+
+                _context.FlightsBookings.Add(booking);
+                await _context.SaveChangesAsync();
+
+                return bookingDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to book hotel: {ex.Message}");
+            }
+        }
 
 		// Phương thức lấy danh sách các chuyến bay
 		public async Task<List<Flight>> GetFlightsAsync()
@@ -82,5 +120,39 @@ namespace TravelAPI.Services
 		{
 			return await _context.Flights.FindAsync(id);
 		}
-	}
+
+        public async Task<List<HotelBookingDTO>> GetHotelBookingsByUserIdAsync(int userId)
+        {
+            return await _context.HotelBookings
+                .Where(h => h.UserId == userId)
+                .Select(h => new HotelBookingDTO
+                {
+                    UserId = h.UserId,
+                    RoomId = h.RoomId,
+                    CheckInDate = h.CheckInDate,
+                    CheckOutDate = h.CheckOutDate,
+                    Status = h.Status
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<FlightBookingDTO>> GetFlightBookingsByUserIdAsync(int userId)
+        {
+            return await _context.FlightsBookings
+                .Where(f => f.UserId == userId)
+                .Select(f => new FlightBookingDTO
+                {
+                    UserId = f.UserId,
+                    FlightId = f.FlightId,
+                    BookingDate = f.BookingDate,
+                    Status = f.Status
+                })
+                .ToListAsync();
+        }
+
+        public async Task<User> GetUserById(int userId)
+        {
+            return await _context.Users.FirstAsync(u => u.UserId == userId);
+        }
+    }
 }

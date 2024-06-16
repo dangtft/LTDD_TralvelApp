@@ -56,9 +56,9 @@ class _FlightsScreenState extends State<FlightsScreen> {
                     .map(
                       (flight) => ItemFlightWidget(
                     flightModel: flight,
-                    onTap: () {
-                      Navigator.of(context).pushNamed(BookTicket.routeName);
-                    },
+                    // onTap: () {
+                    //   Navigator.of(context).pushNamed(BookTicket.routeName);
+                    // },
                   ),
                 )
                     .toList(),

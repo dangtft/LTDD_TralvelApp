@@ -5,12 +5,14 @@ import 'package:app_travel/core/constants/textstyle_ext.dart';
 import 'package:app_travel/core/helpers/assets_helper.dart';
 import 'package:app_travel/core/helpers/image_helper.dart';
 import 'package:app_travel/core/helpers/size_config.dart';
+import 'package:app_travel/data/model/hotel_model.dart';
 import 'package:app_travel/data/model/room_model.dart';
-import 'package:app_travel/representation/screens/main_app.dart';
+import 'package:app_travel/representation/screens/payment_screen.dart';
 import 'package:app_travel/representation/widgets/app_bar_container.dart';
 import 'package:app_travel/representation/widgets/item_button_widget.dart';
 import 'package:app_travel/representation/widgets/item_room_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({Key? key, required this.roomModel}) : super(key: key);
@@ -19,16 +21,32 @@ class CheckOutScreen extends StatefulWidget {
 
   final Room roomModel;
 
+
   @override
   State<CheckOutScreen> createState() => _CheckOutScreenState();
 }
 
 class _CheckOutScreenState extends State<CheckOutScreen> {
+
   final List<String> steps = [
     'Book and Review',
     'Payment',
     'Confirm',
   ];
+  int? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getInt('userId');
+    });
+  }
 
   Widget _buildItemOptionsCheckout(String icon, String title, String value) {
     return Container(
@@ -136,7 +154,33 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       ],
     );
   }
+  void navigateToPaymentScreen() {
 
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen(
+          roomName: widget.roomModel.roomName,
+          totalPrice: widget.roomModel.price,
+          roomId: widget.roomModel.roomId,
+          userId: userId ?? 0,
+          onPaymentComplete: (bool success) {
+            if (success) {
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Payment successful!')),
+              );
+            } else {
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Payment failed! Please try again later.')),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return AppBarContainer(
@@ -160,19 +204,10 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                     height: kMediumPadding,
                   ),
                   ItemRoomWidget(roomModel: widget.roomModel, numberOfRoom: 1),
-                  _buildItemOptionsCheckout(AssetHelper.icoUser, 'Contact Details', 'Add Contact'),
-                  SizedBox(
-                    height: kMediumPadding,
-                  ),
-                  _buildItemOptionsCheckout(AssetHelper.icoPromo, 'Promo Code', 'Add Promo Code'),
-                  SizedBox(
-                    height: kMediumPadding,
-                  ),
+
                   ItemButtonWidget(
                     data: 'PayMent',
-                    onTap: () {
-                      Navigator.of(context).popUntil((route) => route.settings.name == MainApp.routeName);
-                    },
+                    onTap: navigateToPaymentScreen,
                   ),
                   SizedBox(
                     height: kMediumPadding,

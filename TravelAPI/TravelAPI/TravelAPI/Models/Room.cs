@@ -15,8 +15,8 @@ namespace TravelAPI.Models
 		public string? PromoCode { get; set; }
 		public string? Status { get; set; }
 		public int? Rating { get; set; }
-
-		public Hotel? Hotel { get; set; }
+        public int? NumberOfPeople { get; set; }
+        public Hotel? Hotel { get; set; }
 
 		public ICollection<HotelBooking>? HotelBookings { get; set; }
 	}

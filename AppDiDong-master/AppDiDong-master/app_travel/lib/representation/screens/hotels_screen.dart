@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:app_travel/core/helpers/assets_helper.dart';
 import 'package:app_travel/data/model/hotel_model.dart';
 import 'package:app_travel/representation/screens/detail_hotel_screen.dart';
 import 'package:app_travel/representation/widgets/app_bar_container.dart';
