@@ -1,0 +1,18 @@
+Users( UserId int, Name string ,Email string, Password string, Phone string, Address string CreatedAt TIMESTAMP)
+
+
+Hotels (HotelId int, HotelName string, ImageUrl string, Location string, Price decimal , Rating int, IsLike bool, Information string,)
+
+Rooms (RoomId int, RoomName string, RoomSize string, ImageUrl string, Price decimal, HotelId int references(Hotels), Contact string, PromoCode string, Status string)
+
+HotelBookings (BookingId int, UserId int, RoomId int, CheckInDate datetime, CheckOutDate datetime, Status string)
+
+Payment(PaymentId int, BookingId int, TotalPrice decimal, PaymentDate datetime, PaymentMethod string)
+
+//////////////////////////////////////
+
+Flights (FlightId int, FlightName string, ImageUrl string, Location string, Destination string,DayFlight int,DepartureTime datetime, Price decimal, Ticket int)
+
+FlightBookings(FlightBookingId int, UserId int, FlightId int, BookingDate datetime,
+Status string)
+
