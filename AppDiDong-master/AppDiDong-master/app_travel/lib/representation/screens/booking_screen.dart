@@ -1,83 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-import 'package:app_travel/data/model/flight_booking_model.dart';
-import 'package:app_travel/data/model/hotel_booking_model.dart';
-import 'package:app_travel/representation/screens/detail_hotel_screen.dart';
-import 'package:app_travel/representation/screens/detail_flight_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:app_travel/representation/widgets/container_booking.dart';
 import 'package:app_travel/representation/widgets/item_booking_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app_travel/representation/screens/detail_hotel_screen.dart';
+import 'package:app_travel/representation/screens/detail_flight_screen.dart';
+import 'package:app_travel/data/model/booking_provider.dart';
 
-class Booking extends StatefulWidget {
+
+class Booking extends StatelessWidget {
   const Booking({Key? key}) : super(key: key);
 
   static const routeName = '/booking_screen';
 
   @override
-  State<Booking> createState() => _BookingState();
+  Widget build(BuildContext context) {
+    final baseUrl = 'https://localhost:7074/api/Hotel';
+    return ChangeNotifierProvider(
+      create: (_) => BookingProvider(baseUrl)..loadUserId(),
+      child: Consumer<BookingProvider>(
+        builder: (context, provider, _) {
+          if (provider.userId == -1) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Loading...'),
+              ),
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else {
+            return BookingContent(); // Show content once user ID is loaded
+          }
+        },
+      ),
+    );
+  }
 }
 
-class _BookingState extends State<Booking> {
-  List<HotelBooking> hotelBookings = [];
-  List<FlightBooking> flightBookings = [];
-  int? userId;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserId();
-    fetchBookings();
-  }
-
-  Future<void> _loadUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userId = prefs.getInt('userId');
-    });
-  }
-
-  Future<void> fetchBookings() async {
-    try {
-      final response = await http.get(
-        Uri.parse('https://localhost:7074/api/Hotel/bookings/$userId'),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> hotelData = data['hotelBookings'];
-        final List<dynamic> flightData = data['flightBookings'];
-
-        List<HotelBooking> hotelBookingsList = hotelData.map((json) {
-          return HotelBooking.fromJson(json);
-        }).toList();
-
-        List<FlightBooking> flightBookingsList = flightData.map((json) {
-          return FlightBooking.fromJson(json);
-        }).toList();
-
-        setState(() {
-          hotelBookings = hotelBookingsList;
-          flightBookings = flightBookingsList;
-        });
-      } else {
-        throw Exception('Failed to load bookings');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+class BookingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<BookingProvider>(context);
     return ContainerBooking(
       titleString: 'Booking',
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // Display hotel bookings
-            ...hotelBookings.map(
+            // Hiển thị danh sách đặt phòng khách sạn
+            ...provider.hotelBookings.map(
                   (hotel) => ItemBookingWidget(
                 bookingModel: hotel,
                 onTap: () {
@@ -88,8 +59,8 @@ class _BookingState extends State<Booking> {
                 },
               ),
             ),
-            // Display flight bookings
-            ...flightBookings.map(
+            // Hiển thị danh sách đặt vé máy bay
+            ...provider.flightBookings.map(
                   (flight) => ItemBookingWidget(
                 bookingModel: flight,
                 onTap: () {

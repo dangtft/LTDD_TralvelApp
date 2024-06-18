@@ -1,9 +1,9 @@
-import 'package:app_travel/data/model/flight_booking_model.dart';
-import 'package:app_travel/data/model/hotel_booking_model.dart';
+import 'package:app_travel/data/model/flightbooking_dto.dart';
+import 'package:app_travel/data/model/hotelbooking_dto.dart';
 
 class BookingModel {
-  List<FlightBooking> flightBookings;
-  List<HotelBooking> hotelBookings;
+  List<FlightBookingDTO> flightBookings;
+  List<HotelBookingDTO> hotelBookings;
 
   BookingModel({
     required this.flightBookings,
@@ -14,8 +14,8 @@ class BookingModel {
     List<dynamic> flightList = json['flightBookings'] ?? [];
     List<dynamic> hotelList = json['hotelBookings'] ?? [];
 
-    List<FlightBooking> flights = flightList.map((item) => FlightBooking.fromJson(item)).toList();
-    List<HotelBooking> hotels = hotelList.map((item) => HotelBooking.fromJson(item)).toList();
+    List<FlightBookingDTO> flights = flightList.map((item) => FlightBookingDTO.fromJson(item)).toList();
+    List<HotelBookingDTO> hotels = hotelList.map((item) => HotelBookingDTO.fromJson(item)).toList();
 
     return BookingModel(
       flightBookings: flights,

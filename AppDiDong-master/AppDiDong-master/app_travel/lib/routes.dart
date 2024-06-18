@@ -2,6 +2,7 @@ import 'package:app_travel/data/model/hotel_model.dart';
 import 'package:app_travel/data/model/room_model.dart';
 import 'package:app_travel/representation/screens/all_screen.dart';
 import 'package:app_travel/representation/screens/book_ticket.dart';
+import 'package:app_travel/representation/screens/change_password_screen.dart';
 import 'package:app_travel/representation/screens/check_out_screen.dart';
 import 'package:app_travel/representation/screens/detail_hotel_screen.dart';
 import 'package:app_travel/representation/screens/flight_screen.dart';
@@ -31,6 +32,14 @@ final Map<String, WidgetBuilder> routes = {
   BookTicket.routeName: (context) => BookTicket(),
   LoginScreen.routeName: (context) => LoginScreen(),
   SignUpScreen.routeName: (context) => SignUpScreen(),
+  ChangePasswordScreen.routeName: (context) => ChangePasswordScreen(),
+  DetailHotelScreen.routeName: (context) {
+    final Hotel hotelModel = ModalRoute.of(context)!.settings.arguments as Hotel;
+    return DetailHotelScreen(
+      hotelModel: hotelModel,
+    );
+  },
+
 };
 
 MaterialPageRoute<dynamic>? generateRoutes(RouteSettings settings) {

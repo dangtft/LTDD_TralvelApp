@@ -18,8 +18,9 @@ namespace TravelAPI.Interfaces
 		Task<User> RegisterAsync(string name, string email, string phone, string address, string password);
 		Task<HotelBookingDTO> BookHotelAsync(HotelBookingDTO bookingDto);
 		Task<FlightBookingDTO> BookFlightAsync(FlightBookingDTO bookingDtoS);
-        Task<List<HotelBookingDTO>> GetHotelBookingsByUserIdAsync(int userId); 
-        Task<List<FlightBookingDTO>> GetFlightBookingsByUserIdAsync(int userId);
+        Task<List<HotelBookedDTO>> GetHotelBookingsByUserIdAsync(int userId); 
+        Task<List<FlightBookedDTO>> GetFlightBookingsByUserIdAsync(int userId);
 		Task<User> GetUserById (int userId);
+        Task<bool> ChangePasswordAsync(int userId, string newPassword);
     }
 }

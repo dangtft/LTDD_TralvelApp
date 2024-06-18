@@ -187,21 +187,28 @@ namespace TravelAPI.Controllers
 			}
 		}
 
-        [HttpGet("bookings/{userId}")]
-        public async Task<IActionResult> GetBookingsByUserId(int userId)
+        [HttpGet("hotelbookings/{userId}")]
+        public async Task<IActionResult> GetHotelBookingsByUserId(int userId)
         {
             try
             {
                 var hotelBookings = await _hotelRepository.GetHotelBookingsByUserIdAsync(userId);
+               
+                return Ok(hotelBookings);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("flightbookings/{userId}")]
+        public async Task<IActionResult> GetFlightBookingsByUserId(int userId)
+        {
+            try
+            {
+                
                 var flightBookings = await _hotelRepository.GetFlightBookingsByUserIdAsync(userId);
-
-                var bookingCompleteVM = new BookingCompleteVM
-                {
-                    HotelBookings = hotelBookings,
-                    FlightBookings = flightBookings
-                };
-
-                return Ok(bookingCompleteVM);
+                return Ok(flightBookings);
             }
             catch (Exception ex)
             {
@@ -209,7 +216,7 @@ namespace TravelAPI.Controllers
             }
         }
 
-		[HttpGet("GetUser/{userId}")]
+        [HttpGet("GetUser/{userId}")]
 		public async Task<IActionResult> GetUserById(int userId)
 		{
 			try
@@ -222,6 +229,20 @@ namespace TravelAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 		}
+
+        [HttpPost("changePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+        {
+            try
+            {
+                var result = await _hotelRepository.ChangePasswordAsync(model.UserId, model.NewPassword);
+                return Ok(new { success = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
     }
 
 

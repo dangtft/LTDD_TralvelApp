@@ -121,38 +121,69 @@ namespace TravelAPI.Services
 			return await _context.Flights.FindAsync(id);
 		}
 
-        public async Task<List<HotelBookingDTO>> GetHotelBookingsByUserIdAsync(int userId)
+        public async Task<List<HotelBookedDTO>> GetHotelBookingsByUserIdAsync(int userId)
         {
             return await _context.HotelBookings
-                .Where(h => h.UserId == userId)
-                .Select(h => new HotelBookingDTO
-                {
-                    UserId = h.UserId,
-                    RoomId = h.RoomId,
-                    CheckInDate = h.CheckInDate,
-                    CheckOutDate = h.CheckOutDate,
-                    Status = h.Status
-                })
-                .ToListAsync();
+        .Where(h => h.UserId == userId)
+        .Select(h => new HotelBookedDTO
+        {
+            UserId = userId,
+            RoomId = h.RoomId,
+            CheckInDate = h.CheckInDate,
+            CheckOutDate = h.CheckOutDate,
+            Status = h.Status,
+            HotelName = h.Room.Hotel.HotelName,
+            RoomName = h.Room.RoomName,
+            RoomImage = h.Room.ImageUrl,
+            Price = h.Room.Price,
+            HotelImageUrl = h.Room.Hotel.ImageUrl
+        })
+        .ToListAsync();
         }
 
-        public async Task<List<FlightBookingDTO>> GetFlightBookingsByUserIdAsync(int userId)
+        public async Task<List<FlightBookedDTO>> GetFlightBookingsByUserIdAsync(int userId)
         {
             return await _context.FlightsBookings
-                .Where(f => f.UserId == userId)
-                .Select(f => new FlightBookingDTO
-                {
-                    UserId = f.UserId,
-                    FlightId = f.FlightId,
-                    BookingDate = f.BookingDate,
-                    Status = f.Status
-                })
-                .ToListAsync();
+         .Where(f => f.UserId == userId)
+         .Select(f => new FlightBookedDTO
+         {
+             UserId = userId,
+             FlightId = f.FlightId,
+             BookingDate = f.BookingDate,
+             Status = f.Status,
+             FlightName = f.Flight.FlightName,
+             FlightImageUrl = f.Flight.ImageUrl
+         })
+         .ToListAsync();
         }
 
         public async Task<User> GetUserById(int userId)
         {
             return await _context.Users.FirstAsync(u => u.UserId == userId);
         }
+
+        public async Task<bool> ChangePasswordAsync(int userId, string newPassword)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+
+                if (user == null)
+                {
+                    throw new ArgumentException("User not found");
+                }
+
+                user.Password = newPassword;
+
+                await _context.SaveChangesAsync();
+
+                return true; 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to change password: {ex.Message}");
+            }
+        }
+
     }
 }

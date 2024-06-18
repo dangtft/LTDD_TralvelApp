@@ -169,66 +169,42 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         int userId = jsonResponse['userId'];
-        _saveUserId(userId);
+        await _saveUserId(userId);
         // Successful login, navigate to main app screen
         Navigator.pushReplacementNamed(context, MainApp.routeName);
       } else if (response.statusCode == 404) {
         // Handle not found error
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text('Invalid email or password'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+        _showErrorDialog('Invalid email or password');
       } else {
         // Handle other errors
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text('Something went wrong'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+        _showErrorDialog('Something went wrong');
       }
     } catch (e) {
       // Handle network errors
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Network error. Please try again.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+      _showErrorDialog('Network error. Please try again.');
     }
   }
 
-}
-Future<void> _saveUserId(int userId) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setInt('userId', userId);
+  Future<void> _saveUserId(int userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('userId', userId);
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 }
