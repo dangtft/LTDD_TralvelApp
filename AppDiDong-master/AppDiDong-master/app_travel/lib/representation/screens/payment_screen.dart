@@ -186,7 +186,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<http.Response> fetchBookHotelAPI(HotelBooking booking) async {
-    // Replace with actual API endpoint
+
     var url = Uri.parse('https://localhost:7074/api/Hotel/bookhotel');
 
     // Replace with actual API call method (POST, PUT, etc.)

@@ -52,23 +52,11 @@ class _FlightsBookingScreenState extends State<FlightsBookingScreen> {
                 );
               },
             ),
-            ItemOptionsBookingWidget(
-              title: 'Select Date',
-              value: selectDate ?? 'Select date',
-              icon: AssetHelper.icoCalendal,
-              onTap: () async {
-                final result = await Navigator.of(context).pushNamed(SelectDateScreen.routeName);
-                if (result is List<DateTime?>) {
-                  setState(() {
-                    selectDate = '${result[0]?.getStartDate}';
-                  });
-                }
-              },
-            ),
+
             ItemButtonWidget(
               data: 'Search',
               onTap: () {
-                Navigator.of(context).pushNamed(FlightsScreen.routeName);
+                Navigator.of(context).pushNamed(FlightsScreen.routeName, arguments: locationDestination);
               },
             ),
           ],

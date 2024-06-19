@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:app_travel/data/service/auth_service.dart';
 import 'package:app_travel/representation/screens/change_password_screen.dart';
+import 'package:app_travel/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<User> _userFuture;
+  late Future<User?> _userFuture;
   int? userId;
 
   @override
@@ -25,24 +27,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _userFuture = _loadUserId();
   }
 
-  Future<User> _loadUserId() async {
+  Future<User?> _loadUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getInt('userId');
     if (userId != null) {
       return fetchUser(userId!);
     } else {
-      throw Exception('User ID not found in SharedPreferences');
+      return null;
     }
   }
 
-  Future<User> fetchUser(int userId) async {
+  Future<User?> fetchUser(int userId) async {
     final response = await http.get(Uri.parse('https://localhost:7074/api/Hotel/GetUser/$userId'));
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to load user');
+      
     }
+  }
+
+  void _showLoginDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('Not Logged In'),
+        content: Text('Please log in to view your profile.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Dismiss dialog
+              Navigator.of(context).pushNamed(LoginScreen.routeName); // Navigate to LoginScreen
+            },
+            child: Text('Login'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Dismiss dialog
+              Navigator.of(context).pushNamed(SignUpScreen.routeName); // Navigate to SignUpScreen
+            },
+            child: Text('Register'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -51,15 +80,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: Text('Profile'),
       ),
-      body: FutureBuilder<User>(
+      body: FutureBuilder<User?>(
         future: _userFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return Center(child: Text('No data found'));
+          } else if (snapshot.data == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('You are not logged in.'),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _showLoginDialog(),
+                    child: Text('Login'),
+                  ),
+                  SizedBox(height: 10),
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(SignUpScreen.routeName);
+                    },
+                    child: Text('Register'),
+                  ),
+                ],
+              ),
+            );
           } else {
             User user = snapshot.data!;
             return SingleChildScrollView(
@@ -95,9 +143,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   SizedBox(height: kDefaultPadding),
                   ElevatedButton(
-                    onPressed: () {
-                      // Handle logout logic
-                      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+                    onPressed: () async {
+                      await AuthService.logout(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
@@ -106,8 +153,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+
                     child: Text(
-                      'Đăng xuất',
+                      'Logout',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -118,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: kDefaultPadding),
                   ElevatedButton(
                     onPressed: () {
-                      // Handle logout logic
+                      // Handle change password logic
                       Navigator.of(context).pushReplacementNamed(ChangePasswordScreen.routeName);
                     },
                     style: ElevatedButton.styleFrom(
@@ -129,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     child: Text(
-                      'Đổi mật khẩu',
+                      'Change Password',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

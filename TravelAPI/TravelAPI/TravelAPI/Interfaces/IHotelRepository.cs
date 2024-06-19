@@ -22,5 +22,7 @@ namespace TravelAPI.Interfaces
         Task<List<FlightBookedDTO>> GetFlightBookingsByUserIdAsync(int userId);
 		Task<User> GetUserById (int userId);
         Task<bool> ChangePasswordAsync(int userId, string newPassword);
+        Task<List<Hotel>> GetHotelsByLocationAsync(string location);
+		Task<List<Flight>> GetFlightsByLocationAsync(string location);
     }
 }

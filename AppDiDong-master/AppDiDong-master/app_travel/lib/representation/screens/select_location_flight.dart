@@ -2,7 +2,7 @@ import 'package:app_travel/core/constants/dismension_constants.dart';
 import 'package:app_travel/data/model/flight_model.dart';
 import 'package:app_travel/representation/widgets/app_bar_container.dart';
 import 'package:flutter/material.dart';
-import 'package:app_travel/data/model/hotel_model.dart'; // Assuming Hotel model is defined in hotel_model.dart
+
 
 class LocationSelectionFlight extends StatelessWidget {
   final Function(String) onLocation;
@@ -14,7 +14,7 @@ class LocationSelectionFlight extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBarContainer(
-      titleString: 'Select Location',
+      titleString: 'Select Destination',
       paddingContent: EdgeInsets.all(kMediumPadding),
       child: Column(
         children: [

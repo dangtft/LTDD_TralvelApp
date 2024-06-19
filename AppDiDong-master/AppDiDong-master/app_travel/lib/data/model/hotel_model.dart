@@ -5,7 +5,7 @@ class Hotel {
   String location;
   double price;
   int rating;
-  bool isLike;
+  bool? isLike;
   String information;
 
   Hotel({

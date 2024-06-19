@@ -29,7 +29,7 @@ class TravoApp extends StatelessWidget {
       home: Builder(
         builder: (context) {
           SizeConfig.init(context);
-          return WelcommeScreen();
+          return WelcomeScreen();
         },
       ),
     );

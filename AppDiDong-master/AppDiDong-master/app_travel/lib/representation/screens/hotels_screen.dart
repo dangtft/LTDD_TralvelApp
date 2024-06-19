@@ -1,15 +1,17 @@
 import 'dart:convert';
-import 'package:app_travel/data/model/hotel_model.dart';
-import 'package:app_travel/representation/screens/detail_hotel_screen.dart';
-import 'package:app_travel/representation/widgets/app_bar_container.dart';
-import 'package:app_travel/representation/widgets/item_hotel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:app_travel/data/model/hotel_model.dart';
+import 'package:app_travel/representation/widgets/app_bar_container.dart';
+import 'package:app_travel/representation/widgets/item_hotel_widget.dart';
+import 'package:app_travel/representation/screens/detail_hotel_screen.dart';
 
 class HotelsScreen extends StatefulWidget {
-  const HotelsScreen({Key? key}) : super(key: key);
+  const HotelsScreen({Key? key, required this.location}) : super(key: key);
 
   static const String routeName = '/hotels_screen';
+
+  final String location;
 
   @override
   State<HotelsScreen> createState() => _HotelsScreenState();
@@ -21,11 +23,13 @@ class _HotelsScreenState extends State<HotelsScreen> {
   @override
   void initState() {
     super.initState();
-    _futureHotels = fetchHotels();
+    _futureHotels = fetchHotels(widget.location);
   }
 
-  Future<List<Hotel>> fetchHotels() async {
-    final response = await http.get(Uri.parse('https://localhost:7074/api/Hotel/hotels'));
+  Future<List<Hotel>> fetchHotels(String location) async {
+    final response = await http.get(
+      Uri.parse('https://localhost:7074/api/Hotel/$location'),
+    );
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -38,7 +42,6 @@ class _HotelsScreenState extends State<HotelsScreen> {
   @override
   Widget build(BuildContext context) {
     return AppBarContainer(
-      implementTraling: true,
       titleString: 'Hotels',
       child: FutureBuilder<List<Hotel>>(
         future: _futureHotels,
@@ -57,7 +60,10 @@ class _HotelsScreenState extends State<HotelsScreen> {
                       (hotel) => ItemHotelWidget(
                     hotelModel: hotel,
                     onTap: () {
-                      Navigator.of(context).pushNamed(DetailHotelScreen.routeName, arguments: hotel);
+                      Navigator.of(context).pushNamed(
+                        DetailHotelScreen.routeName,
+                        arguments: hotel,
+                      );
                     },
                   ),
                 )

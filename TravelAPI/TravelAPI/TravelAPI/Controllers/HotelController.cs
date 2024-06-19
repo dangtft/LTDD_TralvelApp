@@ -243,6 +243,32 @@ namespace TravelAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
         }
+
+        [HttpGet("{location}")]
+        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotelsByLocation(string location)
+        {
+            var hotels = await _hotelRepository.GetHotelsByLocationAsync(location);
+
+            if (hotels == null || hotels.Count == 0)
+            {
+                return NotFound(new { Message = "No hotels found in the specified location." });
+            }
+
+            return Ok(hotels);
+        }
+
+        [HttpGet("flight/{location}")]
+        public async Task<ActionResult<IEnumerable<Flight>>> GetFlightsByLocation(string location)
+        {
+            var flights = await _hotelRepository.GetFlightsByLocationAsync(location);
+
+            if (flights == null || flights.Count == 0)
+            {
+                return NotFound(new { Message = "No flightls found in the specified location." });
+            }
+
+            return Ok(flights);
+        }
     }
 
 

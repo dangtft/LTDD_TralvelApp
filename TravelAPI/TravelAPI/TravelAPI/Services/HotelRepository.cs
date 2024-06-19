@@ -85,10 +85,9 @@ namespace TravelAPI.Services
             }
         }
 
-		// Phương thức đặt vé máy bay
-		public async Task<FlightBookingDTO> BookFlightAsync(FlightBookingDTO bookingDto)
-		{
-
+        // Phương thức đặt vé máy bay
+        public async Task<FlightBookingDTO> BookFlightAsync(FlightBookingDTO bookingDto)
+        {
             try
             {
                 var booking = new FlightBooking
@@ -100,18 +99,36 @@ namespace TravelAPI.Services
                 };
 
                 _context.FlightsBookings.Add(booking);
+
                 await _context.SaveChangesAsync();
+
+                var flight = await _context.Flights.FindAsync(bookingDto.FlightId);
+
+                if (flight == null)
+                {
+                    throw new Exception("Flight not found");
+                }
+
+                bookingDto.FlightName = flight.FlightName;
+                bookingDto.FlightImageUrl = flight.ImageUrl;
+                bookingDto.Location = flight.Location;
+                bookingDto.Destination = flight.Destination;
+                bookingDto.DepartureTime = flight.DepartureTime ?? default(DateTime);
+                bookingDto.DayFlight = flight.DayFlight ?? 0;
+                bookingDto.TotalPrice = (double)(flight.Price ?? 0);
+                bookingDto.NumberOfTickets = flight.Ticket ?? 0;
 
                 return bookingDto;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to book hotel: {ex.Message}");
+                throw new Exception($"Failed to book flight: {ex.Message}");
             }
         }
 
-		// Phương thức lấy danh sách các chuyến bay
-		public async Task<List<Flight>> GetFlightsAsync()
+
+        // Phương thức lấy danh sách các chuyến bay
+        public async Task<List<Flight>> GetFlightsAsync()
 		{
 			return await _context.Flights.ToListAsync();
 		}
@@ -144,7 +161,7 @@ namespace TravelAPI.Services
         public async Task<List<FlightBookedDTO>> GetFlightBookingsByUserIdAsync(int userId)
         {
             return await _context.FlightsBookings
-         .Where(f => f.UserId == userId)
+            .Where(f => f.UserId == userId)
          .Select(f => new FlightBookedDTO
          {
              UserId = userId,
@@ -183,6 +200,20 @@ namespace TravelAPI.Services
             {
                 throw new Exception($"Failed to change password: {ex.Message}");
             }
+        }
+
+        public async Task<List<Hotel>> GetHotelsByLocationAsync(string location)
+        {
+            return await _context.Hotels
+                .Where(h => h.Location.Contains(location))
+                .ToListAsync();
+        }
+
+        public async Task<List<Flight>> GetFlightsByLocationAsync(string location)
+        {
+            return await _context.Flights
+                .Where(h => h.Destination.Contains(location))
+                .ToListAsync();
         }
 
     }

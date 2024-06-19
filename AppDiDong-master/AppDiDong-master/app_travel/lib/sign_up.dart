@@ -141,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         child: Text(
                           'Create Account',
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,

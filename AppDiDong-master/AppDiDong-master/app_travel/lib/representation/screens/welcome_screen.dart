@@ -4,7 +4,9 @@ import 'package:app_travel/representation/screens/main_app.dart';
 import 'package:app_travel/sign_up.dart';
 import 'package:flutter/material.dart';
 
-class WelcommeScreen extends StatelessWidget{
+class WelcomeScreen extends StatelessWidget {
+  static const routeName = '/welcome';
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -15,13 +17,14 @@ class WelcommeScreen extends StatelessWidget{
         child: Column(
           children: [
             SizedBox(height: 5),
-            Align(alignment: Alignment.centerRight,
+            Align(
+              alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: (){
-                  Navigator.of(context).pushNamed(MainApp.routeName);
+                onPressed: () {
+                  Navigator.of(context).pushReplacementNamed(MainApp.routeName);
                 },
                 child: Text(
-                    'SKIP',
+                  'SKIP',
                   style: TextStyle(
                     color: ColorPalette.primaryColor,
                     fontSize: 20,
@@ -42,7 +45,7 @@ class WelcommeScreen extends StatelessWidget{
                   color: ColorPalette.primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: InkWell(
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
                     },
                     child: Padding(
@@ -62,7 +65,7 @@ class WelcommeScreen extends StatelessWidget{
                   color: ColorPalette.primaryColor,
                   borderRadius: BorderRadius.circular(10),
                   child: InkWell(
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
                     },
                     child: Padding(
@@ -85,5 +88,4 @@ class WelcommeScreen extends StatelessWidget{
       ),
     );
   }
-
 }

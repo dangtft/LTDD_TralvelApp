@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class FlightsScreen extends StatefulWidget {
-  const FlightsScreen({Key? key}) : super(key: key);
+  const FlightsScreen({Key? key, required this.destination}) : super(key: key);
 
   static const String routeName = '/flight_screen';
+  final String destination;
 
   @override
   State<FlightsScreen> createState() => _FlightsScreenState();
@@ -21,11 +22,12 @@ class _FlightsScreenState extends State<FlightsScreen> {
   @override
   void initState() {
     super.initState();
-    _futureFlights = fetchFlights();
+    _futureFlights = fetchFlights(widget.destination);
   }
 
-  Future<List<Flight>> fetchFlights() async {
-    final response = await http.get(Uri.parse('https://localhost:7074/api/Hotel/flights'));
+  Future<List<Flight>> fetchFlights(String destination) async {
+    final response =
+    await http.get(Uri.parse('https://localhost:7074/api/Hotel/flight/$destination'));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -38,7 +40,7 @@ class _FlightsScreenState extends State<FlightsScreen> {
   @override
   Widget build(BuildContext context) {
     return AppBarContainer(
-      implementTraling: true,
+
       titleString: 'Flights',
       child: FutureBuilder<List<Flight>>(
         future: _futureFlights,
@@ -56,9 +58,15 @@ class _FlightsScreenState extends State<FlightsScreen> {
                     .map(
                       (flight) => ItemFlightWidget(
                     flightModel: flight,
-                    // onTap: () {
-                    //   Navigator.of(context).pushNamed(BookTicket.routeName);
-                    // },
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => BookTicket(
+                            flight: flight,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 )
                     .toList(),
